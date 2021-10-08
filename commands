@@ -1,0 +1,43 @@
+
+#start wallets
+export WALLET_ID_1=`curl -s -d '' http://localhost:9080/wallet/create | jq '.wiWallet.getWalletId'`
+
+export WALLET_ID_2=`curl -s -d '' http://localhost:9080/wallet/create | jq '.wiWallet.getWalletId'`
+
+#check out the contracts
+curl -s http://localhost:9080/api/contract/definitions | jq
+
+#start wallet
+curl -s -H "Content-Type: application/json" \
+  --request POST \
+  --data '{"caID": "NFTContract", "caWallet":{"getWalletId": '$WALLET_ID_1'}}' \
+  http://localhost:9080/api/contract/activate | jq
+
+#save wallet instance as WM1_instance
+
+#wallet status
+curl -s http://localhost:9080/api/contract/instance/$W1/status | jq
+
+#mint NFT
+curl -H "Content-Type: application/json" --request POST --data '{"unTokenName":"NFT"}' http://localhost:9080/api/contract/instance/$WM1_instance/endpoint/mint
+
+#start fracada
+curl -s -H "Content-Type: application/json" \
+  --request POST \
+  --data '{"caID": "FracadaContract", "caWallet":{"getWalletId": '$WALLET_ID_1'}}' \
+  http://localhost:9080/api/contract/activate | jq
+ 
+#save wallet instance as WF1_instance
+
+#lock the NFT, copy currency symbol from pab server
+curl -H "Content-Type: application/json" --request POST --data '{"unAssetClass":[{"unCurrencySymbol":"copy-the-currency-symbol"},{"unTokenName":"NFT"}]}' http://localhost:9080/api/contract/instance/$WF1_instance/endpoint/1-lockNFT
+
+#fractioning the NFT
+curl -H "Content-Type: application/json" --request POST --data '{"nftAsset":{"unAssetClass":[{"unCurrencySymbol":"copy-the-currency-symbol"},{"unTokenName":"NFT"}]},"fractions":100,"fractionTokenName":{"unTokenName":"fractNFT"}}' http://localhost:9080/api/contract/instance/$W1/endpoint/2-fractionNFT
+
+#return NFT
+curl -H "Content-Type: application/json" --request POST --data '{"unAssetClass":[{"unCurrencySymbol":"copy-the-currency-symbol"},{"unTokenName":"NFT"}]}' http://localhost:9080/api/contract/instance/$W1/endpoint/3-returnNFT
+
+
+
+
