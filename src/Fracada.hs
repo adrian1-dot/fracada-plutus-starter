@@ -15,10 +15,7 @@
 
 module Fracada (                                         
           FracNFTSchema                                                   
-        , endpoints                                                
---        , fractionNFT                                                     
- --       , lockNFT                                                         
---       , returnNFT                                                       
+        , endpoints                                                                                                      
         , ToFraction (..)                                                 
         , FractionNFTDatum (..)
         ) where
@@ -293,7 +290,4 @@ endpoints = do
 
 mkSchemaDefinitions ''FracNFTSchema
 
-nfts :: KnownCurrency
-nfts = KnownCurrency (ValidatorHash "f") "Token" (TokenName "NFT" :| [])
-
-mkKnownCurrencies ['nfts]
+mkKnownCurrencies []
