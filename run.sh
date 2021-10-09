@@ -56,7 +56,7 @@ printf "\n"
 
 sleep 2
 printf "\n"
-printf "The server log shows now that the NFT is fractionied to 100 pieces, we now could send them to anybody we want." 
+printf "\nThe server log shows now that the NFT is fractionied to 100 pieces, we now could send them to anybody we want.\n" 
 read -n1 -r -p "Press any key to continue..." key
 printf "\n"
 printf "\n"
