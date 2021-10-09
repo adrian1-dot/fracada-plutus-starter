@@ -41,10 +41,8 @@ common lang
 library
     import: lang
     exposed-modules:
-      MyModule
       MintNFT
       Fracada
-      Plutus.Contracts.Game
     build-depends:
       base >= 4.9 && < 5,
       aeson,
@@ -60,24 +58,6 @@ library
       plutus-ledger
     hs-source-dirs: src examples/src
 
-test-suite plutus-example-projects-test
-  import: lang
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  hs-source-dirs: examples/test
-  other-modules:
-    Spec.Game
-  build-depends:
-    plutus-tx       -any,
-    plutus-tx-plugin,
-    plutus-contract -any,
-    plutus-ledger   -any,
-    fracada         -any
-  build-depends:
-    base >=4.9 && <5,
-    tasty -any,
-    tasty-hunit -any,
-    tasty-hedgehog >=0.2.0.0
 
 executable fracada-pab
   import: lang
