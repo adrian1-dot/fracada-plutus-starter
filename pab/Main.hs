@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeFamilies       #-}
 {-# LANGUAGE TypeOperators      #-}
 
-module Main(main, writeCostingScripts) where
+module Main(main{-, writeCostingScripts-}) where
 
 import           Control.Monad                       (void)
 import           Control.Monad.Freer                 (interpret)
@@ -24,7 +24,6 @@ import qualified Plutus.PAB.Effects.Contract.Builtin as Builtin
 import           Plutus.PAB.Simulator                (SimulatorEffectHandlers)
 import qualified Plutus.PAB.Simulator                as Simulator
 import qualified Plutus.PAB.Webserver.Server         as PAB.Server
-import           Plutus.Contracts.Game               as Game
 import           Plutus.Trace.Emulator.Extract       (writeScriptsTo, ScriptsConfig (..), Command (..))
 import           Ledger.Index                        (ValidatorMode(..))
 import           MintNFT                             as NFT
@@ -54,6 +53,7 @@ main = void $ Simulator.runSimulationWith handlers $ do
 
 -- | An example of computing the script size for a particular trace.
 -- Read more: <https://plutus.readthedocs.io/en/latest/plutus/howtos/analysing-scripts.html>
+{-
 writeCostingScripts :: IO ()
 writeCostingScripts = do
   let config = ScriptsConfig { scPath = "/tmp/plutus-costing-outputs/", scCommand = cmd }
@@ -63,10 +63,10 @@ writeCostingScripts = do
   (totalSize, exBudget) <- writeScriptsTo config "game" trace def
   putStrLn $ "Total size = " <> show totalSize
   putStrLn $ "ExBudget = " <> show exBudget
-
+-}
 
 data StarterContracts =
-    GameContract | NFTContract | FracadaContract
+     NFTContract | FracadaContract
     deriving (Eq, Ord, Show, Generic)
 
 -- NOTE: Because 'StarterContracts' only has one constructor, corresponding to
@@ -87,13 +87,11 @@ instance Pretty StarterContracts where
     pretty = viaShow
 
 instance Builtin.HasDefinitions StarterContracts where
-    getDefinitions = [GameContract, NFTContract, FracadaContract]
+    getDefinitions = [NFTContract, FracadaContract]
     getSchema =  \case
-        GameContract   -> Builtin.endpointsToSchemas @Game.GameSchema
         NFTContract    -> Builtin.endpointsToSchemas @NFT.NFTSchema
         FracadaContract -> Builtin.endpointsToSchemas @Fracada.FracNFTSchema
     getContract = \case
-        GameContract    -> SomeBuiltin (Game.game @ContractError)
         NFTContract     -> SomeBuiltin (NFT.mintNFT @ContractError)
         FracadaContract -> SomeBuiltin (Fracada.endpoints @ContractError)
 
@@ -101,4 +99,3 @@ handlers :: SimulatorEffectHandlers (Builtin StarterContracts)
 handlers =
     Simulator.mkSimulatorHandlers def def
     $ interpret (contractHandler Builtin.handleBuiltin)
-
